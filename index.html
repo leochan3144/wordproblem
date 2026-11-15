@@ -180,7 +180,7 @@
                 text: "Sam pays a total of $78 for 6 bottles of green tea and 4 bottles of coffee. The price of a bottle of coffee is $2 more than that of a bottle of green tea. Find the price of a bottle of green tea.",
                 bank: [
                     { text: "Green Tea", type: "yellow" }, { text: "Coffee", type: "yellow" }, { text: "Soda", type: "yellow" }, { text: "Water", type: "yellow" },
-                    { text: "Number of bottles", type: "green" }, { text: "Price", type: "green" }, { text: "Weight", type: "green" }, { text: "Brand", type: "green" }
+                    { text: "Number of bottles", type: "green" }, { text: "Price of a bottle", type: "green" }, { text: "Weight", type: "green" }, { text: "Brand", type: "green" }
                 ]
             },
             {
@@ -194,21 +194,21 @@
                 text: "There are one hundred buns for one hundred students. Each senior student gets three buns, while three junior students share just one bun. Find the number of senior students.",
                 bank: [
                     { text: "Senior students", type: "yellow" }, { text: "Junior students", type: "yellow" }, { text: "Teachers", type: "yellow" }, { text: "Parents", type: "yellow" },
-                    { text: "Number of students", type: "green" }, { text: "Buns per person", type: "green" }, { text: "Age", type: "green" }, { text: "Grade", type: "green" }
+                    { text: "Number of students", type: "green" }, { text: "Number of buns per student", type: "green" }, { text: "Age", type: "green" }, { text: "Grade", type: "green" }
                 ]
             },
             {
                 text: "An exhibition centre with 6 zones employs a total of 132 guards, distributed equally among all zones. Every zone contains 4 more female guards than male guards. Determine the total count of male guards across the entire centre.",
                 bank: [
                     { text: "Male guards", type: "yellow" }, { text: "Female guards", type: "yellow" }, { text: "Cleaners", type: "yellow" }, { text: "Managers", type: "yellow" },
-                    { text: "Guards per zone", type: "green" }, { text: "Total guards", type: "green" }, { text: "Salary", type: "green" }, { text: "Age", type: "green" }
+                    { text: "Number of guards per zone", type: "green" }, { text: "Number of guards in the whole centre", type: "green" }, { text: "Salary", type: "green" }, { text: "Age", type: "green" }
                 ]
             },
             {
                 text: "The number of stickers that Ruby has is 5 times that of Martin. If Ruby gives 10 stickers to Martin, they will have the same number of stickers. Find the total number of stickers that Ruby and Martin have.",
                 bank: [
                     { text: "Ruby", type: "yellow" }, { text: "Martin", type: "yellow" }, { text: "Sam", type: "yellow" }, { text: "Peter", type: "yellow" },
-                    { text: "Number of stickers", type: "green" }, { text: "Given away", type: "green" }, { text: "Bought", type: "green" }, { text: "Lost", type: "green" }
+                    { text: "Number of stickers before", type: "green" }, { text: "Number of stickers after", type: "green" }, { text: "Bought", type: "green" }, { text: "Lost", type: "green" }
                 ]
             }
         ];
@@ -291,7 +291,7 @@
         }
 
         function loadLevel(index) {
-            currentLevel = parseInt(index);
+            currentLevel = parseInt(index, 10);
             questionSelect.value = currentLevel;
             
             const levelData = levels[currentLevel];
@@ -407,7 +407,7 @@
                 if (this.children.length > 0) {
                     const existingItem = this.firstElementChild;
                     const originalParent = item.parentElement;
-                    if(originalParent) {
+                    if (originalParent) {
                         originalParent.appendChild(existingItem);
                     } else {
                         itemBank.appendChild(existingItem);
@@ -516,7 +516,7 @@
                     if (dropzone.children.length > 0 && dropzone.firstElementChild !== draggedItem) {
                         const existingItem = dropzone.firstElementChild;
                         const originalParent = draggedItem.parentElement;
-                        if(originalParent) {
+                        if (originalParent) {
                             originalParent.appendChild(existingItem);
                         } else {
                             itemBank.appendChild(existingItem);
