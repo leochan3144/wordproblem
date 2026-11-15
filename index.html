@@ -1,0 +1,503 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Algebra Word Problem Equation Builder</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        /* Base typography and custom animation */
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+
+        /* Prevent scrolling while dragging on touch devices */
+        .no-scroll {
+            overflow: hidden;
+            touch-action: none;
+        }
+
+        /* Smooth transition for dropzone background colors */
+        .dropzone {
+            transition: all 0.2s ease-in-out;
+        }
+
+        /* Hover effect when dragging over dropzones */
+        .drag-over {
+            background-color: #e2e8f0; /* Tailwind gray-200 */
+            border-color: #64748b; /* Tailwind gray-500 */
+            transform: scale(1.02);
+        }
+
+        /* Style for the puzzle pieces */
+        .puzzle-piece {
+            cursor: grab;
+            user-select: none;
+            touch-action: none; /* Let JS handle touch dragging */
+            transition: transform 0.1s, box-shadow 0.1s;
+        }
+        
+        .puzzle-piece:active {
+            cursor: grabbing;
+        }
+    </style>
+</head>
+<body class="bg-slate-50 min-h-screen text-slate-800 flex flex-col items-center py-8 px-4">
+
+    <div class="max-w-4xl w-full flex flex-col gap-6">
+
+        <!-- Main Page Header -->
+        <header class="bg-indigo-600 text-white p-6 rounded-2xl shadow-lg flex flex-col sm:flex-row justify-between items-center gap-4">
+            <div>
+                <h1 class="text-2xl font-bold tracking-tight">Algebra Word Problems</h1>
+                <p class="text-indigo-200 text-sm mt-1">Complete Part A, Part C, and Part E in order.</p>
+            </div>
+            <nav class="flex items-center gap-2">
+                <a href="#part-a" class="px-3 py-1.5 rounded-lg bg-indigo-700 hover:bg-indigo-500 text-xs font-semibold tracking-wide transition-colors">Part A</a>
+                <a href="#part-c" class="px-3 py-1.5 rounded-lg bg-indigo-700 hover:bg-indigo-500 text-xs font-semibold tracking-wide transition-colors">Part C</a>
+                <a href="#part-e" class="px-3 py-1.5 rounded-lg bg-indigo-700 hover:bg-indigo-500 text-xs font-semibold tracking-wide transition-colors">Part E</a>
+            </nav>
+        </header>
+
+        <!-- PART A -->
+        <section id="part-a" class="bg-white rounded-2xl shadow-md border border-slate-200 p-6 md:p-8 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+            <div>
+                <span class="inline-block px-3 py-1 bg-amber-100 text-amber-800 text-xs font-bold uppercase tracking-wider rounded-full mb-2">Part A</span>
+                <h2 class="text-xl font-bold text-slate-800">Pre-Lesson Check</h2>
+                <p class="text-slate-600 text-sm mt-1">Click the button to preview the questions before building the matrix.</p>
+            </div>
+            <a href="https://forms.gle/DKhwJKSiyAohqgHp7" target="_blank" rel="noopener noreferrer" class="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-6 py-3 bg-amber-500 hover:bg-amber-600 text-white font-bold rounded-xl shadow transition-all transform hover:-translate-y-0.5">
+                <span>Preview questions</span>
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+                </svg>
+            </a>
+        </section>
+
+        <!-- PART C -->
+        <section id="part-c" class="bg-white rounded-2xl shadow-xl overflow-hidden border border-slate-200 flex flex-col">
+            
+            <!-- Part C Header & Question Selector -->
+            <div class="bg-slate-800 text-white p-6 flex flex-col sm:flex-row justify-between items-start sm:items-center shadow-sm z-10 gap-4">
+                <div>
+                    <span class="inline-block px-3 py-1 bg-indigo-500 text-white text-xs font-bold uppercase tracking-wider rounded-full mb-2">Part C</span>
+                    <h2 class="text-xl font-bold tracking-tight">Equation Builder</h2>
+                    <p class="text-slate-300 text-sm mt-1">Drag the yellow and green blocks into the matching grid boxes.</p>
+                </div>
+                <div class="flex items-center w-full sm:w-auto">
+                    <select id="question-select" class="w-full sm:w-64 bg-slate-700 text-white border border-slate-500 text-sm rounded-lg focus:ring-indigo-400 focus:border-indigo-400 block p-2.5 outline-none font-semibold cursor-pointer">
+                        <option value="0">Question 1</option>
+                        <option value="1">Question 2</option>
+                        <option value="2">Question 3</option>
+                        <option value="3">Question 4</option>
+                        <option value="4">Question 5</option>
+                    </select>
+                </div>
+            </div>
+
+            <!-- Main Content Area -->
+            <main class="p-6 md:p-8 flex-grow flex flex-col">
+                
+                <!-- Problem Description -->
+                <div class="mb-6 bg-blue-50 border border-blue-200 p-5 rounded-xl shadow-sm">
+                    <p id="problem-text" class="text-lg font-medium text-slate-700 leading-relaxed">
+                        <!-- Text injected by JS -->
+                    </p>
+                </div>
+
+                <!-- The 3x3 CSS Grid -->
+                <div class="w-full flex justify-center mb-8">
+                    <div class="grid grid-cols-3 gap-3 w-full max-w-3xl bg-slate-50 border-2 border-slate-300 rounded-xl shadow-inner p-4">
+                        
+                        <!-- Top-left disabled cell -->
+                        <div class="h-24 bg-slate-200 rounded-lg opacity-50 relative pointer-events-none border-2 border-slate-300">
+                            <div class="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI0MCIgaGVpZ2h0PSI0MCI+PGxpbmUgeDE9IjAiIHkxPSIwIiB4Mj0iNDAiIHkyPSI0MCIgc3Ryb2tlPSIjY2JkNWUxIiBzdHJva2Utd2lkdGg9IjIiLz48bGluZSB4MT0iNDAiIHkxPSIwIiB4Mj0iMCIgeTI9IjQwIiBzdHJva2U9IiNjYmQ1ZTEiIHN0cm9rZS13aWR0aD0iMiIvPjwvc3ZnPg==')] opacity-30"></div>
+                        </div>
+                        
+                        <!-- (1,2) & (1,3) Yellow Dropzones -->
+                        <div class="dropzone h-24 w-full border-2 border-dashed border-yellow-400 rounded-lg flex items-center justify-center bg-yellow-100 p-2"></div>
+                        <div class="dropzone h-24 w-full border-2 border-dashed border-yellow-400 rounded-lg flex items-center justify-center bg-yellow-100 p-2"></div>
+                        
+                        <!-- (2,1) Green Dropzone -->
+                        <div class="dropzone h-24 w-full border-2 border-dashed border-green-400 rounded-lg flex items-center justify-center bg-green-100 p-2"></div>
+                        <!-- (2,2) & (2,3) Empty Matrix Cells -->
+                        <div class="dropzone h-24 w-full border-2 border-dashed border-slate-300 rounded-lg flex items-center justify-center bg-slate-50 p-2"></div>
+                        <div class="dropzone h-24 w-full border-2 border-dashed border-slate-300 rounded-lg flex items-center justify-center bg-slate-50 p-2"></div>
+                        
+                        <!-- (3,1) Green Dropzone -->
+                        <div class="dropzone h-24 w-full border-2 border-dashed border-green-400 rounded-lg flex items-center justify-center bg-green-100 p-2"></div>
+                        <!-- (3,2) & (3,3) Empty Matrix Cells -->
+                        <div class="dropzone h-24 w-full border-2 border-dashed border-slate-300 rounded-lg flex items-center justify-center bg-slate-50 p-2"></div>
+                        <div class="dropzone h-24 w-full border-2 border-dashed border-slate-300 rounded-lg flex items-center justify-center bg-slate-50 p-2"></div>
+
+                    </div>
+                </div>
+
+                <!-- Draggable Bank Area -->
+                <div class="flex-grow">
+                    <h3 class="text-sm font-bold text-slate-500 uppercase tracking-wider mb-3">Item Pool</h3>
+                    <div id="item-bank" class="flex flex-wrap gap-3 p-5 border-2 border-dashed border-slate-300 rounded-xl bg-slate-100 min-h-[120px] items-center justify-center">
+                        <!-- Draggable puzzle pieces injected by JS -->
+                    </div>
+                </div>
+
+                <!-- Actions -->
+                <div class="mt-8 flex justify-center border-t border-slate-200 pt-6">
+                    <button id="btn-reset" class="px-8 py-3 bg-slate-200 hover:bg-slate-300 text-slate-700 font-bold rounded-lg shadow transition-colors">
+                        Reset Board
+                    </button>
+                </div>
+
+            </main>
+        </section>
+
+        <!-- PART E -->
+        <section id="part-e" class="bg-white rounded-2xl shadow-md border border-slate-200 p-6 md:p-8 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+            <div>
+                <span class="inline-block px-3 py-1 bg-emerald-100 text-emerald-800 text-xs font-bold uppercase tracking-wider rounded-full mb-2">Part E</span>
+                <h2 class="text-xl font-bold text-slate-800">Lesson Wrap-Up</h2>
+                <p class="text-slate-600 text-sm mt-1">Complete the exit ticket after finishing the activity.</p>
+            </div>
+            <a href="https://forms.gle/ziqy1Efv6ZwRo7os6" target="_blank" rel="noopener noreferrer" class="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-6 py-3 bg-emerald-600 hover:bg-emerald-700 text-white font-bold rounded-xl shadow transition-all transform hover:-translate-y-0.5">
+                <span>Exit ticket</span>
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+                </svg>
+            </a>
+        </section>
+
+    </div>
+
+    <script>
+        /**
+         * Application Data & State
+         */
+        const levels = [
+            {
+                text: "Sam pays a total of $78 for 6 bottles of green tea and 4 bottles of coffee. The price of a bottle of coffee is $2 more than that of a bottle of green tea. Find the price of a bottle of green tea.",
+                bank: [
+                    { text: "Green Tea", type: "yellow" }, { text: "Coffee", type: "yellow" }, { text: "Soda", type: "yellow" }, { text: "Water", type: "yellow" },
+                    { text: "Number of bottles", type: "green" }, { text: "Price", type: "green" }, { text: "Weight", type: "green" }, { text: "Brand", type: "green" }
+                ]
+            },
+            {
+                text: "Peter has 28 coins which include $2 coins and $5 coins only. If the total value of the coins is $101, how many $5 coins does he have?",
+                bank: [
+                    { text: "$2 coins", type: "yellow" }, { text: "$5 coins", type: "yellow" }, { text: "$1 coins", type: "yellow" }, { text: "$10 coins", type: "yellow" },
+                    { text: "Number of coins", type: "green" }, { text: "Value per coin", type: "green" }, { text: "Weight", type: "green" }, { text: "Year", type: "green" }
+                ]
+            },
+            {
+                text: "There are one hundred buns for one hundred students. Each senior student gets three buns, while three junior students share just one bun. Find the number of senior students.",
+                bank: [
+                    { text: "Senior students", type: "yellow" }, { text: "Junior students", type: "yellow" }, { text: "Teachers", type: "yellow" }, { text: "Parents", type: "yellow" },
+                    { text: "Number of students", type: "green" }, { text: "Buns per person", type: "green" }, { text: "Age", type: "green" }, { text: "Grade", type: "green" }
+                ]
+            },
+            {
+                text: "The number of stickers that Ruby has is 5 times that of Martin. If Ruby gives 10 stickers to Martin, they will have the same number of stickers. Find the total number of stickers that Ruby and Martin have.",
+                bank: [
+                    { text: "Ruby", type: "yellow" }, { text: "Martin", type: "yellow" }, { text: "Sam", type: "yellow" }, { text: "Peter", type: "yellow" },
+                    { text: "Number of stickers", type: "green" }, { text: "Given away", type: "green" }, { text: "Bought", type: "green" }, { text: "Lost", type: "green" }
+                ]
+            },
+            {
+                text: "An exhibition centre with 6 zones employs a total of 132 guards, distributed equally among all zones. Every zone contains 4 more female guards than male guards. Determine the total count of male guards across the entire centre.",
+                bank: [
+                    { text: "Male guards", type: "yellow" }, { text: "Female guards", type: "yellow" }, { text: "Cleaners", type: "yellow" }, { text: "Managers", type: "yellow" },
+                    { text: "Guards per zone", type: "green" }, { text: "Total guards", type: "green" }, { text: "Salary", type: "green" }, { text: "Age", type: "green" }
+                ]
+            }
+        ];
+
+        let currentLevel = 0;
+        
+        // Touch Drag Polyfill State
+        let draggedItem = null;
+        let placeholderClone = null;
+
+        // DOM Elements
+        const itemBank = document.getElementById('item-bank');
+        const problemText = document.getElementById('problem-text');
+        const questionSelect = document.getElementById('question-select');
+        const btnReset = document.getElementById('btn-reset');
+        
+        // Helper to fetch current dropzones
+        const getDropzones = () => document.querySelectorAll('.dropzone');
+
+        /**
+         * Initialization & Rendering
+         */
+        function init() {
+            setupEventListeners();
+            loadLevel(currentLevel);
+        }
+
+        function shuffleArray(array) {
+            const arr = [...array];
+            for (let i = arr.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [arr[i], arr[j]] = [arr[j], arr[i]];
+            }
+            return arr;
+        }
+
+        function loadLevel(index) {
+            currentLevel = parseInt(index);
+            questionSelect.value = currentLevel;
+            
+            const levelData = levels[currentLevel];
+            problemText.textContent = levelData.text;
+            
+            clearGrid();
+            renderBank(levelData.bank);
+        }
+
+        function clearGrid() {
+            getDropzones().forEach(zone => {
+                zone.innerHTML = '';
+            });
+        }
+
+        function renderBank(bankItems) {
+            itemBank.innerHTML = '';
+            // Shuffle items to present distractors randomly
+            const shuffled = shuffleArray(bankItems);
+            
+            shuffled.forEach((item, i) => {
+                const piece = document.createElement('div');
+                
+                let colorClasses = '';
+                if (item.type === 'yellow') {
+                    colorClasses = 'bg-yellow-300 text-yellow-900 border border-yellow-400 hover:bg-yellow-400';
+                } else if (item.type === 'green') {
+                    colorClasses = 'bg-green-300 text-green-900 border border-green-400 hover:bg-green-400';
+                }
+                
+                piece.className = `puzzle-piece font-bold py-2 px-4 rounded-lg shadow-md hover:shadow-lg transition-all flex items-center justify-center z-10 text-sm sm:text-base text-center ${colorClasses}`;
+                piece.textContent = item.text;
+                piece.dataset.val = item.text;
+                piece.draggable = true;
+                piece.id = `piece-${i}`;
+                
+                // Desktop Native D&D
+                piece.addEventListener('dragstart', handleDragStart);
+                piece.addEventListener('dragend', handleDragEnd);
+                
+                // Mobile/Touch D&D Polyfill
+                piece.addEventListener('touchstart', handleTouchStart, { passive: false });
+                piece.addEventListener('touchmove', handleTouchMove, { passive: false });
+                piece.addEventListener('touchend', handleTouchEnd);
+
+                itemBank.appendChild(piece);
+            });
+
+            // Make bank itself a dropzone to return items
+            itemBank.addEventListener('dragover', handleDragOver);
+            itemBank.addEventListener('dragleave', handleDragLeave);
+            itemBank.addEventListener('drop', handleDropBank);
+            
+            // Attach listeners to dropzones
+            getDropzones().forEach(zone => {
+                zone.removeEventListener('dragover', handleDragOver);
+                zone.removeEventListener('dragleave', handleDragLeave);
+                zone.removeEventListener('drop', handleDrop);
+                
+                zone.addEventListener('dragover', handleDragOver);
+                zone.addEventListener('dragleave', handleDragLeave);
+                zone.addEventListener('drop', handleDrop);
+            });
+        }
+
+        /**
+         * Desktop Drag & Drop Handlers
+         */
+        function handleDragStart(e) {
+            draggedItem = this;
+            e.dataTransfer.setData('text/plain', this.id);
+            e.dataTransfer.effectAllowed = 'move';
+            
+            setTimeout(() => {
+                this.classList.add('opacity-50');
+            }, 0);
+        }
+
+        function handleDragEnd(e) {
+            this.classList.remove('opacity-50');
+            draggedItem = null;
+            document.querySelectorAll('.drag-over').forEach(el => el.classList.remove('drag-over'));
+        }
+
+        function handleDragOver(e) {
+            e.preventDefault(); // Required to allow drop
+            e.dataTransfer.dropEffect = 'move';
+            
+            if (this.classList.contains('dropzone') && this !== draggedItem?.parentElement) {
+                this.classList.add('drag-over');
+            } else if (this.id === 'item-bank') {
+                this.classList.add('bg-slate-200');
+            }
+        }
+
+        function handleDragLeave(e) {
+            if (this.classList.contains('dropzone')) {
+                this.classList.remove('drag-over');
+            } else if (this.id === 'item-bank') {
+                this.classList.remove('bg-slate-200');
+            }
+        }
+
+        function handleDrop(e) {
+            e.preventDefault();
+            this.classList.remove('drag-over');
+            
+            const itemId = e.dataTransfer.getData('text/plain');
+            const item = document.getElementById(itemId) || draggedItem;
+            
+            if (item) {
+                // If dropzone already has an item, swap it back to original parent or item bank
+                if (this.children.length > 0) {
+                    const existingItem = this.firstElementChild;
+                    const originalParent = item.parentElement;
+                    if(originalParent) {
+                        originalParent.appendChild(existingItem);
+                    } else {
+                        itemBank.appendChild(existingItem);
+                    }
+                }
+                this.appendChild(item);
+            }
+        }
+
+        function handleDropBank(e) {
+            e.preventDefault();
+            this.classList.remove('bg-slate-200');
+            
+            const itemId = e.dataTransfer.getData('text/plain');
+            const item = document.getElementById(itemId) || draggedItem;
+            
+            if (item) {
+                itemBank.appendChild(item);
+            }
+        }
+
+        /**
+         * Mobile Touch Handlers (Polyfill for native drag/drop)
+         */
+        function handleTouchStart(e) {
+            if (e.touches.length > 1) return; // Ignore multi-touch
+            
+            draggedItem = this;
+            e.preventDefault(); // Stop scrolling
+            document.body.classList.add('no-scroll');
+            
+            const touch = e.touches[0];
+            const rect = this.getBoundingClientRect();
+            
+            // Create a flying clone that follows the finger
+            placeholderClone = this.cloneNode(true);
+            placeholderClone.style.position = 'fixed';
+            placeholderClone.style.left = rect.left + 'px';
+            placeholderClone.style.top = rect.top + 'px';
+            placeholderClone.style.width = rect.width + 'px';
+            placeholderClone.style.height = rect.height + 'px';
+            placeholderClone.style.margin = '0';
+            placeholderClone.style.zIndex = '1000';
+            placeholderClone.style.opacity = '0.9';
+            placeholderClone.style.pointerEvents = 'none'; // let touch interact with elements underneath
+            placeholderClone.classList.add('scale-105', 'shadow-2xl');
+            
+            document.body.appendChild(placeholderClone);
+            
+            // Dim original
+            this.classList.add('opacity-30');
+            
+            // Calculate offsets so the finger stays on the exact part of the element touched
+            this._touchOffsetX = touch.clientX - rect.left;
+            this._touchOffsetY = touch.clientY - rect.top;
+        }
+
+        function handleTouchMove(e) {
+            if (!placeholderClone || !draggedItem) return;
+            e.preventDefault();
+            
+            const touch = e.touches[0];
+            placeholderClone.style.left = (touch.clientX - draggedItem._touchOffsetX) + 'px';
+            placeholderClone.style.top = (touch.clientY - draggedItem._touchOffsetY) + 'px';
+            
+            // Visual feedback for dropzones underneath
+            const target = document.elementFromPoint(touch.clientX, touch.clientY);
+            document.querySelectorAll('.drag-over, .bg-slate-200').forEach(el => {
+                if (el.classList.contains('dropzone')) el.classList.remove('drag-over');
+                if (el.id === 'item-bank') el.classList.remove('bg-slate-200');
+            });
+            
+            if (target) {
+                const dropzone = target.closest('.dropzone');
+                const bank = target.closest('#item-bank');
+                if (dropzone && dropzone !== draggedItem.parentElement) {
+                    dropzone.classList.add('drag-over');
+                } else if (bank) {
+                    bank.classList.add('bg-slate-200');
+                }
+            }
+        }
+
+        function handleTouchEnd(e) {
+            if (!placeholderClone || !draggedItem) return;
+            
+            document.body.classList.remove('no-scroll');
+            placeholderClone.remove();
+            placeholderClone = null;
+            draggedItem.classList.remove('opacity-30');
+            
+            document.querySelectorAll('.drag-over, .bg-slate-200').forEach(el => {
+                if (el.classList.contains('dropzone')) el.classList.remove('drag-over');
+                if (el.id === 'item-bank') el.classList.remove('bg-slate-200');
+            });
+
+            const touch = e.changedTouches[0];
+            const target = document.elementFromPoint(touch.clientX, touch.clientY);
+            
+            if (target) {
+                const dropzone = target.closest('.dropzone');
+                const bank = target.closest('#item-bank');
+                
+                if (dropzone) {
+                    // Swap logic for touch
+                    if (dropzone.children.length > 0 && dropzone.firstElementChild !== draggedItem) {
+                        const existingItem = dropzone.firstElementChild;
+                        const originalParent = draggedItem.parentElement;
+                        if(originalParent) {
+                            originalParent.appendChild(existingItem);
+                        } else {
+                            itemBank.appendChild(existingItem);
+                        }
+                    }
+                    dropzone.appendChild(draggedItem);
+                } else if (bank) {
+                    itemBank.appendChild(draggedItem);
+                }
+            }
+            draggedItem = null;
+        }
+
+        /**
+         * General Event Listeners Setup
+         */
+        function setupEventListeners() {
+            questionSelect.addEventListener('change', (e) => {
+                loadLevel(e.target.value);
+            });
+
+            btnReset.addEventListener('click', () => {
+                loadLevel(currentLevel);
+            });
+        }
+
+        // Boot
+        window.onload = init;
+    </script>
+</body>
+</html>
